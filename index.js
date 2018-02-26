@@ -25,7 +25,6 @@ const moveSnake = data => {
   const myHead = data.you.body.data[0]
   const myBody = data.you.body.data
   const myTail = data.you.body.data[data.you.body.data.length - 1]
-  console.log('in moveSnake')
 
   const moves = [ {
     direction: "up",
@@ -64,22 +63,18 @@ const moveSnake = data => {
 
 
   if(moves[0].y > myBody[1].y) {
-    console.log('in 1 if')
     moves[0].valid = false
   }
 
   if(moves[1].x < myBody[1].x) {
-    console.log('in 2 if')
     moves[1].valid = false
   }
 
   if(moves[2].x > myBody[1].x) {
-    console.log('in 3 if')
     moves[2].valid = false
   }
 
   if(moves[3].y < myBody[1].y) {
-    console.log('in 4 if')
     moves[3].valid = false
   }
 
@@ -92,7 +87,6 @@ const moveSnake = data => {
       return moves[move].direction
     }
   }
-
 }
 
 
