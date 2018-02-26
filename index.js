@@ -24,7 +24,7 @@ app.use(poweredByHandler)
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
-  console.log(response.json(data));
+  console.log('startreq: ', request);
 
   // Response data
   const data = {
@@ -32,6 +32,8 @@ app.post('/start', (request, response) => {
     head_url: 'http://www.placecage.com/c/200/200', // optional, but encouraged!
     taunt: "Let's do thisss thang!", // optional, but encouraged!
   }
+  console.log('startres: ', response);
+
 
   return response.json(data)
 })
@@ -39,6 +41,7 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
+  console.log('movereq: ', request);
 
   // Response data
   const data = {
@@ -46,6 +49,7 @@ app.post('/move', (request, response) => {
     taunt: 'Outta my way, snake!', // optional, but encouraged!
   }
 
+  console.log('moveres: ', response);
   return response.json(data)
 })
 
