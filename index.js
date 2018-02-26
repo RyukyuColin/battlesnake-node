@@ -25,6 +25,8 @@ const moveSnake = data => {
   const myHead = data.you.body.data[0]
   const myBody = data.you.body.data
   const myTail = data.you.body.data[data.you.body.data.length - 1]
+  const snakes = data.snakes.data
+  // console.log('SNAKES', snakes)
 
   const moves = [ {
     direction: "up",
@@ -48,20 +50,52 @@ const moveSnake = data => {
     valid: true
   } ]
 
+  // Snakes
+  for(let snake in snakes) {
+    if(snakes[snake].name === 'MrBrown'){
+      snakes.splice(snakes[snake])
+    }
+
+    if(snakes.length === 0){
+      break;
+    }
+
+    snakes[snake].body.data.forEach( function(data) {
+      if(data.y >= moves[0].y - 2) {
+        console.log('in 1')
+        moves[0].valid = false
+      }
+      if(data.x <= moves[1].x + 2) {
+        console.log('in 2')
+        moves[1].valid = false
+      }
+      if(data.x >= moves[3].x - 2) {
+        console.log('in 3')
+        moves[2].valid = false
+      }
+      if(data.y <= moves[0].y + 2) {
+        console.log('in 4')
+        moves[3].valid = false
+      }
+    })
+  }
+
+
+  // Wall boundries.
   if(moves[0].y === 0) {
     moves[0].valid = false
   }
-  if(moves[1].x === 19) {
+  if(moves[1].x === data.width - 1) {
     moves[1].valid = false
   }
   if(moves[2].x === 0) {
     moves[2].valid = false
   }
-  if(moves[3].y === 19) {
+  if(moves[3].y === data.height) {
     moves[3].valid = false
   }
 
-
+  // Simple body boundries
   if(moves[0].y > myBody[1].y) {
     moves[0].valid = false
   }
@@ -110,9 +144,9 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
-  // console.log('movereq: ', request.body);
+  // console.log('movereq: ', request.body)
   // console.log('movereqBODY: ', request.body.you.body.data);
-  // console.log('movereqSNAKES: ', request.body.snakes.data);
+  // console.log('movereqSNAKES: ', request.body.snakes.data[0].body.data);
   // console.log('movereqFOOD: ', request.body.food);
 
   // Response data
