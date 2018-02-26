@@ -26,7 +26,6 @@ const moveSnake = data => {
   const myBody = data.you.body.data
   const myTail = data.you.body.data[data.you.body.data.length - 1]
   const snakes = data.snakes.data
-  // console.log('SNAKES', snakes)
 
   const moves = [ {
     direction: "up",
@@ -62,19 +61,15 @@ const moveSnake = data => {
 
     snakes[snake].body.data.forEach( function(data) {
       if(data.y >= moves[0].y - 2) {
-        console.log('in 1')
         moves[0].valid = false
       }
       if(data.x <= moves[1].x + 2) {
-        console.log('in 2')
         moves[1].valid = false
       }
       if(data.x >= moves[3].x - 2) {
-        console.log('in 3')
         moves[2].valid = false
       }
       if(data.y <= moves[0].y + 2) {
-        console.log('in 4')
         moves[3].valid = false
       }
     })
@@ -116,8 +111,6 @@ const moveSnake = data => {
 
   for(let move in moves){
     if(moves[move].valid === true) {
-      console.log('for loop if', moves[move])
-
       return moves[move].direction
     }
   }
