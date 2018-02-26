@@ -21,18 +21,93 @@ app.use(poweredByHandler)
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
 
+const moveSnake = data => {
+  const myHead = data.you.body.data[0]
+  const myBody = data.you.body.data
+  const myTail = data.you.body.data[data.you.body.data.length - 1]
+  console.log('in moveSnake')
+
+  const moves = [ {
+    direction: "up",
+    x: myHead.x,
+    y: myHead.y,
+    valid: true
+  }, {
+    direction: "right",
+    x: myHead.x,
+    y: myHead.y,
+    valid: true
+  }, {
+    direction: "left",
+    x: myHead.x,
+    y: myHead.y,
+    valid: true
+  }, {
+    direction: "down",
+    x: myHead.x,
+    y: myHead.y,
+    valid: true
+  } ]
+
+  if(moves[0].y === 0) {
+    moves[0].valid = false
+  }
+  if(moves[1].x === 19) {
+    moves[1].valid = false
+  }
+  if(moves[2].x === 0) {
+    moves[2].valid = false
+  }
+  if(moves[3].y === 19) {
+    moves[3].valid = false
+  }
+
+
+  if(moves[0].y > myBody[1].y) {
+    console.log('in 1 if')
+    moves[0].valid = false
+  }
+
+  if(moves[1].x < myBody[1].x) {
+    console.log('in 2 if')
+    moves[1].valid = false
+  }
+
+  if(moves[2].x > myBody[1].x) {
+    console.log('in 3 if')
+    moves[2].valid = false
+  }
+
+  if(moves[3].y < myBody[1].y) {
+    console.log('in 4 if')
+    moves[3].valid = false
+  }
+
+  console.log(moves)
+
+  for(let move in moves){
+    if(moves[move].valid === true) {
+      console.log('for loop if', moves[move])
+
+      return moves[move].direction
+    }
+  }
+
+}
+
+
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
-  console.log('startreq: ', request.body);
+  // console.log('startreq: ', request.body);
 
   // Response data
   const data = {
     color: '#DFFF00',
     head_url: 'http://www.placecage.com/c/200/200', // optional, but encouraged!
-    taunt: "Let's do thisss thang!", // optional, but encouraged!
+    taunt: "I'm a sneky boi!", // optional, but encouraged!
   }
-  console.log('startres: ', response.body);
+  // console.log('startres: ', response.body);
 
 
   return response.json(data)
@@ -41,15 +116,18 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
-  console.log('movereq: ', request.body);
+  // console.log('movereq: ', request.body);
+  // console.log('movereqBODY: ', request.body.you.body.data);
+  // console.log('movereqSNAKES: ', request.body.snakes.data);
+  // console.log('movereqFOOD: ', request.body.food);
 
   // Response data
   const data = {
-    move: 'up', // one of: ['up','down','left','right']
+    move: moveSnake(request.body), // one of: ['up','down','left','right']
     taunt: 'Outta my way, snake!', // optional, but encouraged!
   }
 
-  console.log('moveres: ', response.body);
+  // console.log('moveres: ', response.body);
   return response.json(data)
 })
 
