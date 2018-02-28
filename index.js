@@ -26,7 +26,6 @@ function findNearestFood(headX, headY, food) {
   let nearestFood = 0;
   let c = 100;
 
-  console.log('FOOD', food)
   for(let point in food){
     let a = headX - food[point].x;
     let b = headY - food[point].y;
@@ -36,7 +35,6 @@ function findNearestFood(headX, headY, food) {
     } else {
       c = c
     }
-    console.log('DISTANCE: ', c)
   }
   return food[nearestFood];
 }
@@ -96,6 +94,8 @@ const moveSnake = gameData => {
   // Snakes
   for(let snake in snakes) {
       snakes[snake].body.data.splice(- 1, 1);
+
+      console.log('SNAKE HEAD: ', snakes[snake].body.data[0]);
 
     snakes[snake].body.data.forEach( function(data) {
       grid.setWalkableAt(data.x, data.y, false);
@@ -208,22 +208,22 @@ const moveSnake = gameData => {
   }
 
   // console.log(moves);
-  if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
-    console.log('CURRENT MOVE: UP')
-    return 'up'
-  }
-  if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
-    console.log('CURRENT MOVE: RIGHT')
-    return 'right'
-  }
-  if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
-    console.log('CURRENT MOVE: LEFT')
-    return 'left'
-  }
-  if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
-    console.log('CURRENT MOVE: DOWN')
-    return 'down'
-  }
+  // if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
+  //   console.log('CURRENT MOVE: UP')
+  //   return 'up'
+  // }
+  // if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
+  //   console.log('CURRENT MOVE: RIGHT')
+  //   return 'right'
+  // }
+  // if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
+  //   console.log('CURRENT MOVE: LEFT')
+  //   return 'left'
+  // }
+  // if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
+  //   console.log('CURRENT MOVE: DOWN')
+  //   return 'down'
+  // }
 
   for(let move in moves){
     if(moves[move].valid === true){
