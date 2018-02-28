@@ -26,6 +26,7 @@ function findNearestFood(headX, headY, food) {
   let nearestFood = 0;
   let c = 100;
 
+  console.log('FOOD', food)
   for(let point in food){
     let a = headX - food[point].x;
     let b = headY - food[point].y;
@@ -35,6 +36,7 @@ function findNearestFood(headX, headY, food) {
     } else {
       c = c
     }
+    console.log('DISTANCE: ', c)
   }
   return food[nearestFood];
 }
@@ -93,36 +95,35 @@ const moveSnake = gameData => {
 
   // Snakes
   for(let snake in snakes) {
-    // if(snakes[snake].name === 'local') {
-      // console.log(snakes[snake].body.data);
       snakes[snake].body.data.splice(- 1, 1);
-      // console.log('AFTER: ', snakes[snake].body.data)
-    // }
+
     snakes[snake].body.data.forEach( function(data) {
       grid.setWalkableAt(data.x, data.y, false);
-      // if(data.y === myHead.y - 1 && data.x === myHead.x) {
-      //   moves[0].valid = false
-      // } else if(data.y === myHead.y - 2 && data.x === myHead.x) {
-      //   moves[0].valid = false
-      // }
 
-      // if(data.x === myHead.x + 1 && data.y === myHead.y) {
-      //   moves[1].valid = false
-      // } else if(data.x === myHead.x + 2 && data.y === myHead.y){
-      //   moves[1].valid = false
-      // }
 
-      // if(data.x === myHead.x - 1 && data.y === myHead.y) {
-      //   moves[2].valid = false
-      // } else if(data.x === myHead.x - 2 && data.y === myHead.y) {
-      //   moves[2].valid = false
-      // }
+      if(data.y === myHead.y - 1 && data.x === myHead.x) {
+        moves[0].valid = false
+      } else if(data.y === myHead.y - 2 && data.x === myHead.x) {
+        moves[0].valid = false
+      }
 
-      // if(data.y === myHead.y + 1 && data.x === myHead.x) {
-      //   moves[3].valid = false
-      // } else if(data.y === myHead.y + 2 && data.x === myHead.x) {
-      //   moves[3].valid = false
-      // }
+      if(data.x === myHead.x + 1 && data.y === myHead.y) {
+        moves[1].valid = false
+      } else if(data.x === myHead.x + 2 && data.y === myHead.y){
+        moves[1].valid = false
+      }
+
+      if(data.x === myHead.x - 1 && data.y === myHead.y) {
+        moves[2].valid = false
+      } else if(data.x === myHead.x - 2 && data.y === myHead.y) {
+        moves[2].valid = false
+      }
+
+      if(data.y === myHead.y + 1 && data.x === myHead.x) {
+        moves[3].valid = false
+      } else if(data.y === myHead.y + 2 && data.x === myHead.x) {
+        moves[3].valid = false
+      }
     })
   }
 
@@ -159,7 +160,7 @@ const moveSnake = gameData => {
     grid.nodes[nodes].forEach(function(node) {
       // if(node.walkable === false){
       // console.log('HEAD: ', myHead)
-      console.log('NODE: ', node.x, node.y)
+      // console.log('NODE: ', node.x, node.y)
       if(node.walkable === false) {
         if(myHead.y - 1 === node.y && myHead.x === node.x) {
           moves[0].valid = false
