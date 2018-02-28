@@ -194,40 +194,44 @@ const moveSnake = gameData => {
     moves[1].valid = false; //right
     moves[2].valid = false; //left
     moves[3].valid = false; //down
+    console.log('CURRENT MOVE: UP')
   }
   if(path[0][1] === path[1][1] && path[0][0] < path[1][0] && moves[1].valid) {
     moves[0].valid = false; //up
     moves[2].valid = false; //left
     moves[3].valid = false; //down
+    console.log('CURRENT MOVE: RIGHT')
   }
   if(path[0][1] === path[1][1] && path[0][0] > path[1][0] && moves[2].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[3].valid = false; //down
+    console.log('CURRENT MOVE: LEFT')
   }
   if(path[0][0] === path[1][0] && path[0][1] < path[1][1] && moves[3].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[2].valid = false; //left
+    console.log('CURRENT MOVE: DOWN')
   }
 
-  // console.log(moves);
-  // if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
-  //   console.log('CURRENT MOVE: UP')
-  //   return 'up'
-  // }
-  // if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
-  //   console.log('CURRENT MOVE: RIGHT')
-  //   return 'right'
-  // }
-  // if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
-  //   console.log('CURRENT MOVE: LEFT')
-  //   return 'left'
-  // }
-  // if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
-  //   console.log('CURRENT MOVE: DOWN')
-  //   return 'down'
-  // }
+  console.log(moves);
+  if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
+    console.log('CURRENT MOVE: UP')
+    return 'up'
+  }
+  if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
+    console.log('CURRENT MOVE: RIGHT')
+    return 'right'
+  }
+  if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
+    console.log('CURRENT MOVE: LEFT')
+    return 'left'
+  }
+  if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
+    console.log('CURRENT MOVE: DOWN')
+    return 'down'
+  }
 
   for(let move in moves){
     if(moves[move].valid === true){
