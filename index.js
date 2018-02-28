@@ -255,7 +255,7 @@ app.post('/move', (request, response) => {
   // Response data
   const data = {
     move: moveSnake(request.body), // one of: ['up','down','left','right']
-    taunt: return request.body.snakes.data > 2 ? 'Radical Sauce!' : 'The Sauce is loose!' // optional, but encouraged!
+    taunt: 'The Sauce is loose!', // optional, but encouraged!
   }
 
   return response.json(data)
