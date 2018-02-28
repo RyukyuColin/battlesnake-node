@@ -236,15 +236,13 @@ const moveSnake = gameData => {
 // Handle POST request to '/start'
 app.post('/start', (request, response) => {
   // NOTE: Do something here to start the game
-  // console.log('startreq: ', request.body);
 
   // Response data
   const data = {
-    color: '#DFFF00',
+    color: '#42F4BC',
     head_url: 'http://www.placecage.com/c/200/200', // optional, but encouraged!
     taunt: "I'm a sneky boi!", // optional, but encouraged!
   }
-  // console.log('startres: ', response.body);
 
 
   return response.json(data)
@@ -253,18 +251,13 @@ app.post('/start', (request, response) => {
 // Handle POST request to '/move'
 app.post('/move', (request, response) => {
   // NOTE: Do something here to generate your move
-  // console.log('movereq: ', request.body)
-  // console.log('movereqBODY: ', request.body.you.body.data);
-  // console.log('movereqSNAKES: ', request.body.snakes.data[0].body.data);
-  // console.log('movereqFOOD: ', request.body.food);
 
   // Response data
   const data = {
     move: moveSnake(request.body), // one of: ['up','down','left','right']
-    taunt: 'Outta my way, snake!', // optional, but encouraged!
+    taunt: return request.body.snakes.data > 2 ? 'Radical Sauce!' : 'The Sauce is loose!' // optional, but encouraged!
   }
 
-  // console.log('moveres: ', response.body);
   return response.json(data)
 })
 
