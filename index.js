@@ -99,30 +99,30 @@ const moveSnake = gameData => {
       // console.log('AFTER: ', snakes[snake].body.data)
     // }
     snakes[snake].body.data.forEach( function(data) {
-      // grid.setWalkableAt(data.x, data.y, false);
-      if(data.y === myHead.y - 1 && data.x === myHead.x) {
-        moves[0].valid = false
-      } else if(data.y === myHead.y - 2 && data.x === myHead.x) {
-        moves[0].valid = false
-      }
+      grid.setWalkableAt(data.x, data.y, false);
+      // if(data.y === myHead.y - 1 && data.x === myHead.x) {
+      //   moves[0].valid = false
+      // } else if(data.y === myHead.y - 2 && data.x === myHead.x) {
+      //   moves[0].valid = false
+      // }
 
-      if(data.x === myHead.x + 1 && data.y === myHead.y) {
-        moves[1].valid = false
-      } else if(data.x === myHead.x + 2 && data.y === myHead.y){
-        moves[1].valid = false
-      }
+      // if(data.x === myHead.x + 1 && data.y === myHead.y) {
+      //   moves[1].valid = false
+      // } else if(data.x === myHead.x + 2 && data.y === myHead.y){
+      //   moves[1].valid = false
+      // }
 
-      if(data.x === myHead.x - 1 && data.y === myHead.y) {
-        moves[2].valid = false
-      } else if(data.x === myHead.x - 2 && data.y === myHead.y) {
-        moves[2].valid = false
-      }
+      // if(data.x === myHead.x - 1 && data.y === myHead.y) {
+      //   moves[2].valid = false
+      // } else if(data.x === myHead.x - 2 && data.y === myHead.y) {
+      //   moves[2].valid = false
+      // }
 
-      if(data.y === myHead.y + 1 && data.x === myHead.x) {
-        moves[3].valid = false
-      } else if(data.y === myHead.y + 2 && data.x === myHead.x) {
-        moves[3].valid = false
-      }
+      // if(data.y === myHead.y + 1 && data.x === myHead.x) {
+      //   moves[3].valid = false
+      // } else if(data.y === myHead.y + 2 && data.x === myHead.x) {
+      //   moves[3].valid = false
+      // }
     })
   }
 
@@ -154,34 +154,35 @@ const moveSnake = gameData => {
   //   moves[3].valid = false
   // }
 
-  // for(let nodes in grid.nodes){
-  //   // console.log('GRID: ', grid.nodes[nodes].length)
-  //   grid.nodes[nodes].forEach(function(node) {
-  //     // if(node.walkable === false){
-  //     // console.log('HEAD: ', myHead)
-  //     // console.log('NODE: ', node.y, node.x)
-  //     // }
-  //     if(node.walkable === false && myHead.y - 1 === node.y){
-  //       moves[0].valid = false
-  //       // console.log('NO UP')
-  //     }
-  //     if(node.walkable === false && myHead.x + 1 === node.x) {
-  //       moves[1].valid = false
-  //       // console.log('NO RIGHT')
-  //     }
-  //     if(node.walkable === false && myHead.x - 1 === node.x) {
-  //       moves[2].valid = false
-  //       // console.log('NO LEFT')
-  //     }
-  //     if(node.walkable === false && myHead.y + 1 === node.y) {
-  //       moves[3].valid = false
-  //       // console.log('NO DOWN')
-  //     }
-  //   })
-  //   // for(let singleNode in grid.nodes[nodes]){
-  //   //   console.log('NODE: ', singleNode)
-  //   // }
-  // }
+  for(let nodes in grid.nodes){
+    // console.log('GRID: ', grid.nodes[nodes].length)
+    grid.nodes[nodes].forEach(function(node) {
+      // if(node.walkable === false){
+      // console.log('HEAD: ', myHead)
+      console.log('NODE: ', node.x, node.y)
+      if(node.walkable === false) {
+        if(myHead.y - 1 === node.y && myHead.x === node.x) {
+          moves[0].valid = false
+          console.log('NO UP')
+        }
+        if(myHead.x + 1 === node.x && myHead.y === node.y) {
+          moves[1].valid = false
+          console.log('NO RIGHT')
+        }
+        if(myHead.x - 1 === node.x && myHead.y === node.y) {
+          moves[2].valid = false
+          console.log('NO LEFT')
+        }
+        if(myHead.y + 1 === node.y && myHead.x === node.x) {
+          moves[3].valid = false
+          console.log('NO DOWN')
+        }
+      }
+    })
+    // for(let singleNode in grid.nodes[nodes]){
+    //   console.log('NODE: ', singleNode)
+    // }
+  }
 
   // Path boundries
   if(path[0][0] === path[1][0] && path[0][1] > path[1][1] && moves[0].valid) {
@@ -189,17 +190,17 @@ const moveSnake = gameData => {
     moves[2].valid = false; //left
     moves[3].valid = false; //down
   }
-  if(path[0][1] === path[1][1] && path[0][0] < path[1][0] && moves[1].valid){
+  if(path[0][1] === path[1][1] && path[0][0] < path[1][0] && moves[1].valid) {
     moves[0].valid = false; //up
     moves[2].valid = false; //left
     moves[3].valid = false; //down
   }
-  if(path[0][1] === path[1][1] && path[0][0] > path[1][0] && moves[2].valid){
+  if(path[0][1] === path[1][1] && path[0][0] > path[1][0] && moves[2].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[3].valid = false; //down
   }
-  if(path[0][0] === path[1][0] && path[0][1] < path[1][1] && moves[3].valid){
+  if(path[0][0] === path[1][0] && path[0][1] < path[1][1] && moves[3].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[2].valid = false; //left
@@ -207,25 +208,25 @@ const moveSnake = gameData => {
 
   // console.log(moves);
   if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
-    // console.log('CURRENT MOVE: UP')
+    console.log('CURRENT MOVE: UP')
     return 'up'
   }
-  if((path[0][0] < path[path.length - 1][0]) && moves[1].valid){
-    // console.log('CURRENT MOVE: RIGHT')
+  if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
+    console.log('CURRENT MOVE: RIGHT')
     return 'right'
   }
-  if((path[0][0] > path[path.length - 1][0]) && moves[2].valid){
-    // console.log('CURRENT MOVE: LEFT')
+  if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
+    console.log('CURRENT MOVE: LEFT')
     return 'left'
   }
-  if((path[0][1] < path[path.length - 1][1]) && moves[3].valid){
-    // console.log('CURRENT MOVE: DOWN')
+  if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
+    console.log('CURRENT MOVE: DOWN')
     return 'down'
   }
 
   for(let move in moves){
     if(moves[move].valid === true){
-      // console.log('CURRENT MOVE: ', moves[move].direction)
+      console.log('CURRENT MOVE: ', moves[move].direction)
       return moves[move].direction
     }
   }
