@@ -95,7 +95,7 @@ const moveSnake = gameData => {
   for(let snake in snakes) {
       snakes[snake].body.data.splice(- 1, 1);
 
-      console.log('SNAKE HEAD: ', snakes[snake].body.data[0]);
+      // console.log('SNAKE HEAD: ', snakes[snake].body.data[0]);
 
     snakes[snake].body.data.forEach( function(data) {
       grid.setWalkableAt(data.x, data.y, false);
@@ -103,27 +103,31 @@ const moveSnake = gameData => {
 
       if(data.y === myHead.y - 1 && data.x === myHead.x) {
         moves[0].valid = false
-      } else if(data.y === myHead.y - 2 && data.x === myHead.x) {
-        moves[0].valid = false
       }
+      // else if(data.y === myHead.y - 2 && data.x === myHead.x) {
+      //   moves[0].valid = false
+      // }
 
       if(data.x === myHead.x + 1 && data.y === myHead.y) {
         moves[1].valid = false
-      } else if(data.x === myHead.x + 2 && data.y === myHead.y){
-        moves[1].valid = false
       }
+      // else if(data.x === myHead.x + 2 && data.y === myHead.y){
+      //   moves[1].valid = false
+      // }
 
       if(data.x === myHead.x - 1 && data.y === myHead.y) {
         moves[2].valid = false
-      } else if(data.x === myHead.x - 2 && data.y === myHead.y) {
-        moves[2].valid = false
       }
+      // else if(data.x === myHead.x - 2 && data.y === myHead.y) {
+      //   moves[2].valid = false
+      // }
 
       if(data.y === myHead.y + 1 && data.x === myHead.x) {
         moves[3].valid = false
-      } else if(data.y === myHead.y + 2 && data.x === myHead.x) {
-        moves[3].valid = false
       }
+      // else if(data.y === myHead.y + 2 && data.x === myHead.x) {
+      //   moves[3].valid = false
+      // }
     })
   }
 
@@ -164,19 +168,19 @@ const moveSnake = gameData => {
       if(node.walkable === false) {
         if(myHead.y - 1 === node.y && myHead.x === node.x) {
           moves[0].valid = false
-          console.log('NO UP')
+          // console.log('NO UP')
         }
         if(myHead.x + 1 === node.x && myHead.y === node.y) {
           moves[1].valid = false
-          console.log('NO RIGHT')
+          // console.log('NO RIGHT')
         }
         if(myHead.x - 1 === node.x && myHead.y === node.y) {
           moves[2].valid = false
-          console.log('NO LEFT')
+          // console.log('NO LEFT')
         }
         if(myHead.y + 1 === node.y && myHead.x === node.x) {
           moves[3].valid = false
-          console.log('NO DOWN')
+          // console.log('NO DOWN')
         }
       }
     })
@@ -227,7 +231,7 @@ const moveSnake = gameData => {
 
   for(let move in moves){
     if(moves[move].valid === true){
-      console.log('CURRENT MOVE: ', moves[move].direction)
+      // console.log('CURRENT MOVE: ', moves[move].direction)
       return moves[move].direction
     }
   }
