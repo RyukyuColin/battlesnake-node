@@ -130,6 +130,7 @@ const moveSnake = gameData => {
       // }
     })
   }
+  console.log(grid.nodes)
 
   // Wall boundries.
   if(moves[0].y === 0) {
@@ -159,7 +160,7 @@ const moveSnake = gameData => {
   //   moves[3].valid = false
   // }
 
-  for(let nodes in grid.nodes){
+  for(let nodes in grid.nodes) {
     // console.log('GRID: ', grid.nodes[nodes].length)
     grid.nodes[nodes].forEach(function(node) {
       // if(node.walkable === false){
@@ -190,52 +191,53 @@ const moveSnake = gameData => {
   }
 
   // Path boundries
+  console.log('PATH: ', path)
   if(path[0][0] === path[1][0] && path[0][1] > path[1][1] && moves[0].valid) {
     moves[1].valid = false; //right
     moves[2].valid = false; //left
     moves[3].valid = false; //down
-    console.log('CURRENT MOVE: UP')
+    // console.log('CURRENT MOVE: UP')
   }
   if(path[0][1] === path[1][1] && path[0][0] < path[1][0] && moves[1].valid) {
     moves[0].valid = false; //up
     moves[2].valid = false; //left
     moves[3].valid = false; //down
-    console.log('CURRENT MOVE: RIGHT')
+    // console.log('CURRENT MOVE: RIGHT')
   }
   if(path[0][1] === path[1][1] && path[0][0] > path[1][0] && moves[2].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[3].valid = false; //down
-    console.log('CURRENT MOVE: LEFT')
+    // console.log('CURRENT MOVE: LEFT')
   }
   if(path[0][0] === path[1][0] && path[0][1] < path[1][1] && moves[3].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[2].valid = false; //left
-    console.log('CURRENT MOVE: DOWN')
+    // console.log('CURRENT MOVE: DOWN')
   }
 
-  console.log(moves);
-  if((path[0][1] > path[path.length - 1][1]) && moves[0].valid) {
+  if((path[0][1] >= path[path.length - 1][1]) && moves[0].valid) {
     console.log('CURRENT MOVE: UP')
     return 'up'
   }
-  if((path[0][0] < path[path.length - 1][0]) && moves[1].valid) {
+  if((path[0][0] <= path[path.length - 1][0]) && moves[1].valid) {
     console.log('CURRENT MOVE: RIGHT')
     return 'right'
   }
-  if((path[0][0] > path[path.length - 1][0]) && moves[2].valid) {
+  if((path[0][0] >= path[path.length - 1][0]) && moves[2].valid) {
     console.log('CURRENT MOVE: LEFT')
     return 'left'
   }
-  if((path[0][1] < path[path.length - 1][1]) && moves[3].valid) {
+  if((path[0][1] <= path[path.length - 1][1]) && moves[3].valid) {
     console.log('CURRENT MOVE: DOWN')
     return 'down'
   }
 
+  console.log(moves);
   for(let move in moves){
     if(moves[move].valid === true){
-      // console.log('CURRENT MOVE: ', moves[move].direction)
+      console.log('CURRENT MOVE: ', moves[move].direction)
       return moves[move].direction
     }
   }
