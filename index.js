@@ -29,26 +29,39 @@ function findNearestFood(headX, headY, food) {
   for(let point in food){
     let a = headX - food[point].x;
     let b = headY - food[point].y;
-    if(Math.sqrt( a*a + b*b ) < c) {
+    let distance = Math.sqrt(a*a + b*b);
+
+    if(distance < c) {
       nearestFood = point;
-      c = Math.sqrt( a*a + b*b );
+      c = distance;
     } else {
-      c = c
+      c = c;
     }
   }
   return food[nearestFood];
 }
 
+function amINearFood(nearestFood, myHead) {
+  if((nearestFood.x === myHead.x + 1 && nearestFood.y === myHead.y) ||
+    (nearestFood.x === myHead.x - 1 && nearestFood.y === myHead.y)  ||
+    (nearestFood.y === myHead.y + 1 && nearestFood.x === myHead.x)  ||
+    (nearestFood.y === myHead.y - 1 && nearestFood.x === myHead.x)) {
+      return true;
+  } else {
+      return false;
+  }
+}
+
 const moveSnake = gameData => {
-  const myHead = gameData.you.body.data[0]
-  const myBody = gameData.you.body.data
-  const myTail = gameData.you.body.data[gameData.you.body.data.length - 1]
-  const snakes = gameData.snakes.data
-  const food = gameData.food.data
+  const myHead = gameData.you.body.data[0];
+  const myBody = gameData.you.body.data;
+  const snakes = gameData.snakes.data;
+  const food = gameData.food.data;
+  const nearestFood = findNearestFood(myHead.x, myHead.y, food);
+  const goingForFood = amINearFood(nearestFood, myHead);
 
-  nearestFood = findNearestFood(myHead.x, myHead.y, food);
-
-  const grid = new PF.Grid(gameData.width, gameData.height)
+  // PathFinder variables
+  const grid = new PF.Grid(gameData.width, gameData.height);
   const finder = new PF.AStarFinder();
   const path = finder.findPath(myHead.x, myHead.y, nearestFood.x, nearestFood.y, grid) || null;
 
@@ -74,160 +87,116 @@ const moveSnake = gameData => {
     valid: true
   } ]
 
-  // Wall boundries
-  // if(myHead.y === 0) {
-  //   moves[0].valid = false;
-  // }
-  // if(myHead.x + 1 === gameData.width) {
-  //   moves[1].valid = false;
-  // }
-  // if(myHead.x === 0) {
-  //   moves[2].valid = false;
-  // }
-  // if(myHead.y + 1 === gameData.height) {
-  //   moves[3].valid = false;
-  // }
-  let goingForFood = false;
-
-  if((nearestFood.x === myHead.x + 1 && nearestFood.y === myHead.y) ||
-     (nearestFood.x === myHead.x - 1 && nearestFood.y === myHead.y) ||
-     (nearestFood.y === myHead.y + 1 && nearestFood.x === myHead.x) ||
-     (nearestFood.y === myHead.y - 1 && nearestFood.x === myHead.x)) {
-       goingForFood = true;
-  }
-
-
   // Snakes
   for(let snake in snakes) {
+    let enemyGoingForFood = false;
     let snakeHead = snakes[snake].body.data[0];
-      snakes[snake].body.data.splice(- 1, 1);
 
-      let enemyGoingForFood = false
-      if((nearestFood.x === snakeHead.x + 1 && nearestFood.y === snakeHead.y) ||
-         (nearestFood.x === snakeHead.x - 1 && nearestFood.y === snakeHead.y) ||
-         (nearestFood.y === snakeHead.y + 1 && nearestFood.x === snakeHead.x) ||
-         (nearestFood.y === snakeHead.y - 1 && nearestFood.x === snakeHead.x)) {
-           enemyGoingForFood = true;
+      if(snakes[snake].id !== gameData.you.id) {
+        if((nearestFood.x === snakeHead.x + 1 && nearestFood.y === snakeHead.y) ||
+           (nearestFood.x === snakeHead.x - 1 && nearestFood.y === snakeHead.y) ||
+           (nearestFood.y === snakeHead.y + 1 && nearestFood.x === snakeHead.x) ||
+           (nearestFood.y === snakeHead.y - 1 && nearestFood.x === snakeHead.x)) {
+             enemyGoingForFood = true;
+        }
       }
 
-      if(goingForFood && enemyGoingForFood && snakes[snake].body.data.length > myBody.length) {
+      if(goingForFood && enemyGoingForFood && snakes[snake].body.data.length >= myBody.length) {
         grid.setWalkableAt(nearestFood.x, nearestFood.y, false);
       }
 
+    snakes[snake].body.data.splice(- 1, 1);
     snakes[snake].body.data.forEach( function(data) {
       grid.setWalkableAt(data.x, data.y, false);
 
 
       if(data.y === myHead.y - 1 && data.x === myHead.x) {
-        moves[0].valid = false
+        moves[0].valid = false;
       }
       // else if(data.y === myHead.y - 2 && data.x === myHead.x) {
       //   moves[0].valid = false
       // }
 
       if(data.x === myHead.x + 1 && data.y === myHead.y) {
-        moves[1].valid = false
+        moves[1].valid = false;
       }
       // else if(data.x === myHead.x + 2 && data.y === myHead.y){
       //   moves[1].valid = false
       // }
 
       if(data.x === myHead.x - 1 && data.y === myHead.y) {
-        moves[2].valid = false
+        moves[2].valid = false;
       }
       // else if(data.x === myHead.x - 2 && data.y === myHead.y) {
       //   moves[2].valid = false
       // }
 
       if(data.y === myHead.y + 1 && data.x === myHead.x) {
-        moves[3].valid = false
+        moves[3].valid = false;
       }
       // else if(data.y === myHead.y + 2 && data.x === myHead.x) {
       //   moves[3].valid = false
       // }
     })
   }
-  // console.log(grid.nodes)
 
   // Wall boundries.
   if(moves[0].y === 0) {
-    moves[0].valid = false
+    moves[0].valid = false;
   }
   if(moves[1].x === gameData.width - 1) {
-    moves[1].valid = false
+    moves[1].valid = false;
   }
   if(moves[2].x === 0) {
-    moves[2].valid = false
+    moves[2].valid = false;
   }
   if(moves[3].y === gameData.height - 1) {
-    moves[3].valid = false
+    moves[3].valid = false;
   }
 
-  // Simple body boundries
-  // if(moves[0].y > myBody[1].y) {
-  //   moves[0].valid = false
-  // }
-  // if(moves[1].x < myBody[1].x) {
-  //   moves[1].valid = false
-  // }
-  // if(moves[2].x > myBody[1].x) {
-  //   moves[2].valid = false
-  // }
-  // if(moves[3].y < myBody[1].y) {
-  //   moves[3].valid = false
-  // }
-
   for(let nodes in grid.nodes) {
-    // console.log('GRID: ', grid.nodes[nodes].length)
     grid.nodes[nodes].forEach(function(node) {
-      // if(node.walkable === false){
-      // console.log('HEAD: ', myHead)
-      // console.log('NODE: ', node.x, node.y)
       if(node.walkable === false) {
         if(myHead.y - 1 === node.y && myHead.x === node.x) {
-          moves[0].valid = false
+          moves[0].valid = false;
           // console.log('NO UP')
         }
         if(myHead.x + 1 === node.x && myHead.y === node.y) {
-          moves[1].valid = false
+          moves[1].valid = false;
           // console.log('NO RIGHT')
         }
         if(myHead.x - 1 === node.x && myHead.y === node.y) {
-          moves[2].valid = false
+          moves[2].valid = false;
           // console.log('NO LEFT')
         }
         if(myHead.y + 1 === node.y && myHead.x === node.x) {
-          moves[3].valid = false
+          moves[3].valid = false;
           // console.log('NO DOWN')
         }
       }
     })
-    // for(let singleNode in grid.nodes[nodes]){
-    //   console.log('NODE: ', singleNode)
-    // }
   }
 
   // Path boundries
-  // console.log('PATH: ', path)
-  if(path[0][0] === path[1][0] && path[0][1] > path[1][1] && moves[0].valid) {
+  if(path[0][0] === path[1][0] && path[0][1] >= path[1][1] && moves[0].valid) {
     moves[1].valid = false; //right
     moves[2].valid = false; //left
     moves[3].valid = false; //down
     // console.log('CURRENT MOVE: UP')
   }
-  if(path[0][1] === path[1][1] && path[0][0] < path[1][0] && moves[1].valid) {
+  if(path[0][1] === path[1][1] && path[0][0] <= path[1][0] && moves[1].valid) {
     moves[0].valid = false; //up
     moves[2].valid = false; //left
     moves[3].valid = false; //down
     // console.log('CURRENT MOVE: RIGHT')
   }
-  if(path[0][1] === path[1][1] && path[0][0] > path[1][0] && moves[2].valid) {
+  if(path[0][1] === path[1][1] && path[0][0] >= path[1][0] && moves[2].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[3].valid = false; //down
     // console.log('CURRENT MOVE: LEFT')
   }
-  if(path[0][0] === path[1][0] && path[0][1] < path[1][1] && moves[3].valid) {
+  if(path[0][0] === path[1][0] && path[0][1] <= path[1][1] && moves[3].valid) {
     moves[0].valid = false; //up
     moves[1].valid = false; //right
     moves[2].valid = false; //left
@@ -236,26 +205,26 @@ const moveSnake = gameData => {
 
   if((path[0][1] >= path[path.length - 1][1]) && moves[0].valid) {
     // console.log('CURRENT MOVE: UP')
-    return 'up'
+    return 'up';
   }
   if((path[0][0] <= path[path.length - 1][0]) && moves[1].valid) {
     // console.log('CURRENT MOVE: RIGHT')
-    return 'right'
+    return 'right';
   }
   if((path[0][0] >= path[path.length - 1][0]) && moves[2].valid) {
     // console.log('CURRENT MOVE: LEFT')
-    return 'left'
+    return 'left';
   }
   if((path[0][1] <= path[path.length - 1][1]) && moves[3].valid) {
     // console.log('CURRENT MOVE: DOWN')
-    return 'down'
+    return 'down';
   }
 
   // console.log(moves);
   for(let move in moves){
     if(moves[move].valid === true){
       // console.log('CURRENT MOVE: ', moves[move].direction)
-      return moves[move].direction
+      return moves[move].direction;
     }
   }
 }
@@ -267,7 +236,7 @@ app.post('/start', (request, response) => {
 
   // Response data
   const data = {
-    color: '#42F4BC',
+    color: '#733307',
     head_url: 'http://www.placecage.com/c/200/200', // optional, but encouraged!
     taunt: "I'm a sneky boi!", // optional, but encouraged!
   }
