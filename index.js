@@ -87,15 +87,32 @@ const moveSnake = gameData => {
   // if(myHead.y + 1 === gameData.height) {
   //   moves[3].valid = false;
   // }
+  let goingForFood = false;
 
-  // Food
+  if((nearestFood.x === myHead.x + 1 && nearestFood.y === myHead.y) ||
+     (nearestFood.x === myHead.x - 1 && nearestFood.y === myHead.y) ||
+     (nearestFood.y === myHead.y + 1 && nearestFood.x === myHead.x) ||
+     (nearestFood.y === myHead.y - 1 && nearestFood.x === myHead.x)) {
+       goingForFood = true;
+  }
 
 
   // Snakes
   for(let snake in snakes) {
+    let snakeHead = snakes[snake].body.data[0];
       snakes[snake].body.data.splice(- 1, 1);
 
-      // console.log('SNAKE HEAD: ', snakes[snake].body.data[0]);
+      let enemyGoingForFood = false
+      if((nearestFood.x === snakeHead.x + 1 && nearestFood.y === snakeHead.y) ||
+         (nearestFood.x === snakeHead.x - 1 && nearestFood.y === snakeHead.y) ||
+         (nearestFood.y === snakeHead.y + 1 && nearestFood.x === snakeHead.x) ||
+         (nearestFood.y === snakeHead.y - 1 && nearestFood.x === snakeHead.x)) {
+           enemyGoingForFood = true;
+      }
+
+      if(goingForFood && enemyGoingForFood && snakes[snake].body.data.length > myBody.length) {
+        grid.setWalkableAt(nearestFood.x, nearestFood.y, false);
+      }
 
     snakes[snake].body.data.forEach( function(data) {
       grid.setWalkableAt(data.x, data.y, false);
@@ -234,7 +251,7 @@ const moveSnake = gameData => {
     return 'down'
   }
 
-  console.log(moves);
+  // console.log(moves);
   for(let move in moves){
     if(moves[move].valid === true){
       // console.log('CURRENT MOVE: ', moves[move].direction)
