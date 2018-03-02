@@ -57,12 +57,19 @@ const moveSnake = gameData => {
   const myBody = gameData.you.body.data;
   const snakes = gameData.snakes.data;
   const food = gameData.food.data;
+                               //  .filter(function(point) {
+                               //      (point[0] > 0 || point[0] < gameData.width - 1)
+                               //   || (point[1] > 0 || point[1] < gameData.height - 1)
+                               // });
   const nearestFood = findNearestFood(myHead.x, myHead.y, food);
   const goingForFood = amINearFood(nearestFood, myHead);
 
   // PathFinder variables
   const grid = new PF.Grid(gameData.width, gameData.height);
-  const finder = new PF.AStarFinder();
+  const finder = new PF.BestFirstFinder({
+      allowDiagonal: true
+      // heuristic: PF.Heuristic.chebyshev
+  });
   const path = finder.findPath(myHead.x, myHead.y, nearestFood.x, nearestFood.y, grid) || null;
 
   const moves = [ {
@@ -154,29 +161,30 @@ const moveSnake = gameData => {
     moves[3].valid = false;
   }
 
-  for(let nodes in grid.nodes) {
-    grid.nodes[nodes].forEach(function(node) {
-      if(node.walkable === false) {
-        if(myHead.y - 1 === node.y && myHead.x === node.x) {
-          moves[0].valid = false;
-          // console.log('NO UP')
+    for(let nodes in grid.nodes) {
+      grid.nodes[nodes].forEach(function(node) {
+        if(node.walkable === false) {
+          if(myHead.y - 1 === node.y && myHead.x === node.x) {
+            moves[0].valid = false;
+            // console.log('NO UP')
+          }
+          if(myHead.x + 1 === node.x && myHead.y === node.y) {
+            moves[1].valid = false;
+            // console.log('NO RIGHT')
+          }
+          if(myHead.x - 1 === node.x && myHead.y === node.y) {
+            moves[2].valid = false;
+            // console.log('NO LEFT')
+          }
+          if(myHead.y + 1 === node.y && myHead.x === node.x) {
+            moves[3].valid = false;
+            // console.log('NO DOWN')
+          }
         }
-        if(myHead.x + 1 === node.x && myHead.y === node.y) {
-          moves[1].valid = false;
-          // console.log('NO RIGHT')
-        }
-        if(myHead.x - 1 === node.x && myHead.y === node.y) {
-          moves[2].valid = false;
-          // console.log('NO LEFT')
-        }
-        if(myHead.y + 1 === node.y && myHead.x === node.x) {
-          moves[3].valid = false;
-          // console.log('NO DOWN')
-        }
-      }
-    })
-  }
+      })
+    }
 
+  // if(gameData.you.health < 90) {
   // Path boundries
   if(path[0][0] === path[1][0] && path[0][1] >= path[1][1] && moves[0].valid) {
     moves[1].valid = false; //right
@@ -203,27 +211,29 @@ const moveSnake = gameData => {
     // console.log('CURRENT MOVE: DOWN')
   }
 
-  if((path[0][1] >= path[path.length - 1][1]) && moves[0].valid) {
-    // console.log('CURRENT MOVE: UP')
+  console.log('PATH: ', path);
+  if((path[0][1] >= path[1][1]) && moves[0].valid) {
+    console.log('CURRENT MOVE: UP')
     return 'up';
   }
-  if((path[0][0] <= path[path.length - 1][0]) && moves[1].valid) {
-    // console.log('CURRENT MOVE: RIGHT')
+  if((path[0][0] <= path[1][0]) && moves[1].valid) {
+    console.log('CURRENT MOVE: RIGHT')
     return 'right';
   }
-  if((path[0][0] >= path[path.length - 1][0]) && moves[2].valid) {
-    // console.log('CURRENT MOVE: LEFT')
+  if((path[0][0] >= path[1][0]) && moves[2].valid) {
+    console.log('CURRENT MOVE: LEFT')
     return 'left';
   }
-  if((path[0][1] <= path[path.length - 1][1]) && moves[3].valid) {
-    // console.log('CURRENT MOVE: DOWN')
+  if((path[0][1] <= path[1][1]) && moves[3].valid) {
+    console.log('CURRENT MOVE: DOWN')
     return 'down';
   }
+  // }
 
   // console.log(moves);
   for(let move in moves){
     if(moves[move].valid === true){
-      // console.log('CURRENT MOVE: ', moves[move].direction)
+      console.log('CURRENT MOVE: ', moves[move].direction)
       return moves[move].direction;
     }
   }
