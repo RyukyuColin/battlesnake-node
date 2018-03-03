@@ -52,6 +52,22 @@ function amINearFood(nearestFood, myHead) {
   }
 }
 
+function generateMatrix(number) {
+  const matrix = [];
+
+  for(let i = 0; i < number; i++) {
+    const matrixFill = [];
+
+    for(let j = 0; j < number; j++) {
+      matrixFill.push(0);
+    }
+
+    matrix.push(matrixFill);
+  }
+
+  return matrix;
+}
+
 const moveSnake = gameData => {
   const myHead = gameData.you.body.data[0];
   const myBody = gameData.you.body.data;
@@ -78,16 +94,14 @@ const moveSnake = gameData => {
                                         });
                                       }
                                     });
-    // console.log('FOOD: ', food);
 
     nearestFood = findNearestFood(myHead.x, myHead.y, food);
     goingForFood = amINearFood(nearestFood, myHead);
-    console.log('NEAR: ', nearestFood)
   }
 
   // PathFinder grid
   const grid = new PF.Grid(gameData.width, gameData.height);
-  let finder = new PF.BestFirstFinder({
+  const finder = new PF.BestFirstFinder({
     allowDiagonal: true
     // heuristic: PF.Heuristic.chebyshev
    });
