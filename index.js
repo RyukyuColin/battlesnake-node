@@ -22,33 +22,74 @@ app.use(poweredByHandler)
 
 // --- SNAKE LOGIC GOES BELOW THIS LINE ---
 
-function findNearestFood(headX, headY, food) {
-  let nearestFood = [];
+function filterFood(gameData) {
+  const foodData = [];
 
-  if(food.length) {
-    for(let point in food){
-      let a = headX - food[point].x;
-      let b = headY - food[point].y;
-      let distance = Math.sqrt(a*a + b*b);
-
-      nearestFood.push([food[point].x, food[point].y, distance, food[point].danger]);
+  gameData.food.data.filter(function(point) {
+    if((point.x > 0 && point.x < gameData.width - 1)
+      && (point.y > 0 && point.y < gameData.height - 1)) {
+      foodData.push({
+        y: point.y,
+        x: point.x,
+        object: 'point',
+        danger: 0
+      })
+    } else {
+      foodData.push({
+        y: point.y,
+        x: point.x,
+        object: 'point',
+        danger: 1
+      });
     }
-    return nearestFood.sort((a, b) => a[2] > b[2]).sort((a, b) => a[3] > b[3]);
-  } else {
-    return false;
-  }
+  });
+
+  return foodData;
 }
 
+function findNearestFood(headX, headY, food) {
+  let nearestFood = {
+    noDanger: [],
+    danger: []
+  };
+
+  for(let point in food){
+    let a = headX - food[point].x;
+    let b = headY - food[point].y;
+    let distance = Math.sqrt(a*a + b*b);
+
+    if(food[point].danger === 0) {
+      nearestFood.noDanger.push({
+        x: food[point].x,
+        y: food[point].y,
+        dist: distance,
+        dngr: food[point].danger
+      });
+    } else if(food[point].danger === 1) {
+      nearestFood.danger.push({
+        x: food[point].x,
+        y: food[point].y,
+        dist: distance,
+        dngr: food[point].danger
+      });
+    }
+  }
+  nearestFood.noDanger.sort((a, b) => a.dist - b.dist);
+  nearestFood.danger.sort((a, b) => a.dist - b.dist);
+  return nearestFood;
+}
+
+
 function amINearFood(nearestFood, myHead) {
-  if(nearestFood.length){
-    if((nearestFood[0][0] === myHead.x + 1 && nearestFood[0][1] === myHead.y) ||
-      (nearestFood[0][0] === myHead.x - 1 && nearestFood[0][1] === myHead.y)  ||
-      (nearestFood[0][1] === myHead.y + 1 && nearestFood[0][0] === myHead.x)  ||
-      (nearestFood[0][1] === myHead.y - 1 && nearestFood[0][0] === myHead.x)) {
+  if(nearestFood.length) {
+    if((nearestFood[0].x === myHead.x + 1 && nearestFood[0].y === myHead.y) ||
+      (nearestFood[0].x === myHead.x - 1 && nearestFood[0].y === myHead.y)  ||
+      (nearestFood[0].y === myHead.y + 1 && nearestFood[0].x === myHead.x)  ||
+      (nearestFood[0].y === myHead.y - 1 && nearestFood[0].x === myHead.x)) {
         return true;
     }
   } else {
-    return false
+      return false;
   }
 }
 
@@ -72,38 +113,17 @@ const moveSnake = gameData => {
   const myHead = gameData.you.body.data[0];
   const myBody = gameData.you.body.data;
   const snakes = gameData.snakes.data;
-  const food = [];
-  let nearestFood;
-  let goingForFood;
-  if(gameData.food.data.length) {
-    gameData.food.data.filter(function(point) {
-      if((point.x > 0 && point.x < gameData.width - 1)
-        && (point.y > 0 && point.y < gameData.height - 1)) {
-        food.push({
-          y: point.y,
-          x: point.x,
-          object: 'point',
-          danger: 0
-        })
-      } else {
-        food.push({
-          y: point.y,
-          x: point.x,
-          object: 'point',
-          danger: 1
-        });
-      }
-    });
-
-    nearestFood = findNearestFood(myHead.x, myHead.y, food);
-    goingForFood = amINearFood(nearestFood, myHead);
-  }
+  const food = filterFood(gameData);
+  const sortedFood = findNearestFood(myHead.x, myHead.y, food);
+  const nearestFood = sortedFood.noDanger.length ? sortedFood.noDanger : sortedFood.danger;
+  const goingForFood = amINearFood(nearestFood, myHead);
 
   // PathFinder grid
   const grid = new PF.Grid(gameData.width, gameData.height);
-  const finder = new PF.BestFirstFinder();
-    // allowDiagonal: true
+  const finder = new PF.BestFirstFinder({
+    allowDiagonal: true
     // heuristic: PF.Heuristic.chebyshev
+  });
 
   const moves = [ {
     direction: "up",
@@ -133,16 +153,16 @@ const moveSnake = gameData => {
     let snakeHead = snakes[snake].body.data[0];
 
       if(snakes[snake].id !== gameData.you.id && nearestFood.length) {
-        if((nearestFood[0][0] === snakeHead.x + 1 && nearestFood[0][1] === snakeHead.y) ||
-           (nearestFood[0][0] === snakeHead.x - 1 && nearestFood[0][1] === snakeHead.y) ||
-           (nearestFood[0][1] === snakeHead.y + 1 && nearestFood[0][0] === snakeHead.x) ||
-           (nearestFood[0][1] === snakeHead.y - 1 && nearestFood[0][0] === snakeHead.x)) {
+        if((nearestFood[0].x === snakeHead.x + 1 && nearestFood[0].y === snakeHead.y) ||
+           (nearestFood[0].x === snakeHead.x - 1 && nearestFood[0].y === snakeHead.y) ||
+           (nearestFood[0].y === snakeHead.y + 1 && nearestFood[0].x === snakeHead.x) ||
+           (nearestFood[0].y === snakeHead.y - 1 && nearestFood[0].x === snakeHead.x)) {
              enemyGoingForFood = true;
         }
       }
 
       if(goingForFood && enemyGoingForFood && snakes[snake].body.data.length >= myBody.length) {
-        grid.setWalkableAt(nearestFood[0][0], nearestFood[0][1], false);
+        grid.setWalkableAt(nearestFood[0].x, nearestFood[0].y, false);
       }
 
     snakes[snake].body.data.splice(- 1, 1);
@@ -181,29 +201,29 @@ const moveSnake = gameData => {
   }
 
   // Change pathing dependent on opponents.
-  let path;
-  if(snakes.length < 3 && gameData.you.health > 40) {
-    path = finder.findPath(myHead.x, myHead.y, myBody[gameData.you.body.data.length - 1].x,
-                           myBody[gameData.you.body.data.length - 1].y, grid);
+  // let path;
+  // if(snakes.length < 3 && gameData.you.health > 40) {
+  //   path = finder.findPath(myHead.x, myHead.y, myBody[gameData.you.body.data.length - 1].x,
+  //                          myBody[gameData.you.body.data.length - 1].y, grid);
 
-  } else if(snakes.length < 3 && gameData.you.health < 30) {
-    path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
+  // } else if(snakes.length < 3 && gameData.you.health < 30) {
+  //   path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
 
-  } else {
-    path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
-  }
+  // } else {
+    const path = finder.findPath(myHead.x, myHead.y, nearestFood[0].x, nearestFood[0].y, grid);
+  // }
 
   // Wall boundries.
-  if(moves[0].y === 0) {
+  if(myHead.y === 0) {
     moves[0].valid = false;
   }
-  if(moves[1].x === gameData.width - 1) {
+  if(myHead.x === gameData.width - 1) {
     moves[1].valid = false;
   }
-  if(moves[2].x === 0) {
+  if(myHead.x === 0) {
     moves[2].valid = false;
   }
-  if(moves[3].y === gameData.height - 1) {
+  if(myHead.y === gameData.height - 1) {
     moves[3].valid = false;
   }
 
