@@ -31,10 +31,9 @@ function findNearestFood(headX, headY, food) {
       let b = headY - food[point].y;
       let distance = Math.sqrt(a*a + b*b);
 
-      nearestFood.push([food[point].x, food[point].y, distance]);
+      nearestFood.push([food[point].x, food[point].y, distance, food[point].danger]);
     }
-
-    return nearestFood.sort((a, b) => a[2] > b[2]);
+    return nearestFood.sort((a, b) => a[2] > b[2]).sort((a, b) => a[3] > b[3]);
   } else {
     return false;
   }
@@ -57,25 +56,34 @@ const moveSnake = gameData => {
   const myHead = gameData.you.body.data[0];
   const myBody = gameData.you.body.data;
   const snakes = gameData.snakes.data;
-  let food;
+  const food = [];
   let nearestFood;
   let goingForFood;
   if(gameData.food.data.length) {
-    food = gameData.food.data.filter(function(point) {
+    gameData.food.data.filter(function(point) {
                                       if((point.x > 0 && point.x < gameData.width - 1)
                                         && (point.y > 0 && point.y < gameData.height - 1)) {
-                                        return {
+                                        food.push({
                                           y: point.y,
                                           x: point.x,
-                                          object: 'point'
-                                        }
+                                          object: 'point',
+                                          danger: 0
+                                        })
+                                      } else {
+                                        food.push({
+                                          y: point.y,
+                                          x: point.x,
+                                          object: 'point',
+                                          danger: 1
+                                        });
                                       }
                                     });
+    // console.log('FOOD: ', food);
 
     nearestFood = findNearestFood(myHead.x, myHead.y, food);
     goingForFood = amINearFood(nearestFood, myHead);
+    console.log('NEAR: ', nearestFood)
   }
-  // console.log(food, nearestFood, goingForFood);
 
   // PathFinder grid
   const grid = new PF.Grid(gameData.width, gameData.height);
@@ -159,15 +167,7 @@ const moveSnake = gameData => {
     })
   }
 
-  // console.log(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1])
-
-  let path;
-  if(nearestFood.length) {
-    // console.log('THERE IS A PATH');
-    path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid) || null;
-  }
-  // console.log('PATH: ', path)
-
+  const path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
 
   // Wall boundries.
   if(moves[0].y === 0) {
@@ -206,8 +206,8 @@ const moveSnake = gameData => {
     })
   }
 
-  console.log(moves);
-  if(nearestFood.length){
+  // console.log(moves);
+  if(path.length){
   // if(gameData.you.health < 90) {
   // Path boundries
     if(path[0][0] === path[1][0] && path[0][1] >= path[1][1] && moves[0].valid) {
