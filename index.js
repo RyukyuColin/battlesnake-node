@@ -52,21 +52,21 @@ function amINearFood(nearestFood, myHead) {
   }
 }
 
-function generateMatrix(number) {
-  const matrix = [];
+// function generateMatrix(number) {
+//   const matrix = [];
 
-  for(let i = 0; i < number; i++) {
-    const matrixFill = [];
+//   for(let i = 0; i < number; i++) {
+//     const matrixFill = [];
 
-    for(let j = 0; j < number; j++) {
-      matrixFill.push(0);
-    }
+//     for(let j = 0; j < number; j++) {
+//       matrixFill.push(0);
+//     }
 
-    matrix.push(matrixFill);
-  }
+//     matrix.push(matrixFill);
+//   }
 
-  return matrix;
-}
+//   return matrix;
+// }
 
 const moveSnake = gameData => {
   const myHead = gameData.you.body.data[0];
@@ -77,23 +77,23 @@ const moveSnake = gameData => {
   let goingForFood;
   if(gameData.food.data.length) {
     gameData.food.data.filter(function(point) {
-                                      if((point.x > 0 && point.x < gameData.width - 1)
-                                        && (point.y > 0 && point.y < gameData.height - 1)) {
-                                        food.push({
-                                          y: point.y,
-                                          x: point.x,
-                                          object: 'point',
-                                          danger: 0
-                                        })
-                                      } else {
-                                        food.push({
-                                          y: point.y,
-                                          x: point.x,
-                                          object: 'point',
-                                          danger: 1
-                                        });
-                                      }
-                                    });
+      if((point.x > 0 && point.x < gameData.width - 1)
+        && (point.y > 0 && point.y < gameData.height - 1)) {
+        food.push({
+          y: point.y,
+          x: point.x,
+          object: 'point',
+          danger: 0
+        })
+      } else {
+        food.push({
+          y: point.y,
+          x: point.x,
+          object: 'point',
+          danger: 1
+        });
+      }
+    });
 
     nearestFood = findNearestFood(myHead.x, myHead.y, food);
     goingForFood = amINearFood(nearestFood, myHead);
@@ -101,10 +101,9 @@ const moveSnake = gameData => {
 
   // PathFinder grid
   const grid = new PF.Grid(gameData.width, gameData.height);
-  const finder = new PF.BestFirstFinder({
-    allowDiagonal: true
+  const finder = new PF.BestFirstFinder();
+    // allowDiagonal: true
     // heuristic: PF.Heuristic.chebyshev
-   });
 
   const moves = [ {
     direction: "up",
@@ -181,7 +180,18 @@ const moveSnake = gameData => {
     })
   }
 
-  const path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
+  // Change pathing dependent on opponents.
+  let path;
+  if(snakes.length < 3 && gameData.you.health > 40) {
+    path = finder.findPath(myHead.x, myHead.y, myBody[gameData.you.body.data.length - 1].x,
+                           myBody[gameData.you.body.data.length - 1].y, grid);
+
+  } else if(snakes.length < 3 && gameData.you.health < 30) {
+    path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
+
+  } else {
+    path = finder.findPath(myHead.x, myHead.y, nearestFood[0][0], nearestFood[0][1], grid);
+  }
 
   // Wall boundries.
   if(moves[0].y === 0) {
